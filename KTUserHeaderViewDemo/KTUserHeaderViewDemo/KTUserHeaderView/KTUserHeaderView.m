@@ -34,6 +34,7 @@
 //设置layer
 - (void)setupLayerView {
     self.contentMode = UIViewContentModeScaleAspectFill;
+    self.clipsToBounds = YES;
     self.layer.cornerRadius = self.frame.size.width/2;
     self.layer.backgroundColor = [[UIColor grayColor] CGColor];
     self.layer.borderColor = [[UIColor whiteColor] CGColor];
@@ -117,8 +118,8 @@
 - (void)imagePickerController:(UIImagePickerController  *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
     [picker dismissViewControllerAnimated:YES completion:nil];
     UIImage *myimage =  [info objectForKey:UIImagePickerControllerOriginalImage];
-    [self.delegate KTUserHeaderImageDidChanged:myimage];
     [self setImage:myimage];
+    [self.delegate KTUserHeaderImageDidChanged:myimage];
 }
 
 @end

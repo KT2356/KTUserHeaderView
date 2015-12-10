@@ -63,11 +63,6 @@
 			children = (
 				68CBECB61C191709004BC9F0 /* KTUserHeaderView */,
 				68CBEC9F1C191655004BC9F0 /* Supporting Files */,
-				68CBECA21C191655004BC9F0 /* AppDelegate.h */,
-				68CBECA31C191655004BC9F0 /* AppDelegate.m */,
-				68CBECA81C191655004BC9F0 /* Main.storyboard */,
-				68CBECA51C191655004BC9F0 /* ViewController.h */,
-				68CBECA61C191655004BC9F0 /* ViewController.m */,
 			);
 			path = KTUserHeaderViewDemo;
 			sourceTree = "<group>";
@@ -75,9 +70,14 @@
 		68CBEC9F1C191655004BC9F0 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				68CBECA21C191655004BC9F0 /* AppDelegate.h */,
+				68CBECA31C191655004BC9F0 /* AppDelegate.m */,
 				68CBECAB1C191655004BC9F0 /* Assets.xcassets */,
 				68CBECB01C191655004BC9F0 /* Info.plist */,
 				68CBECAD1C191655004BC9F0 /* LaunchScreen.storyboard */,
+				68CBECA81C191655004BC9F0 /* Main.storyboard */,
+				68CBECA51C191655004BC9F0 /* ViewController.h */,
+				68CBECA61C191655004BC9F0 /* ViewController.m */,
 				68CBECA01C191655004BC9F0 /* main.m */,
 			);
 			path = "Supporting Files";
