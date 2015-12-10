@@ -15,7 +15,9 @@
 @interface KTUserHeaderView : UIImageView
 @property (nonatomic, weak) id <KTUserHeaderViewDelegate> delegate;
 
-- (instancetype)initInSuperView:(UIView *)superView withImageUrl:(NSURL *)imageURL;
+- (instancetype)initInSuperView:(UIView *)superView
+             withPlaceholderImg:(UIImage *)placeholder
+              webImageUrlString:(NSString *)imgUrlString;
+
 - (void)setUserImageBourderColor:(UIColor *)color Width:(float)width;
-- (NSString *)base64ImageStr:(UIImage *)image;
 @end

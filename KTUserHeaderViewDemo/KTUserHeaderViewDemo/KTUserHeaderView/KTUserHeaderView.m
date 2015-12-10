@@ -8,20 +8,37 @@
 
 #import "KTUserHeaderView.h"
 @interface KTUserHeaderView ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate>
+@property (nonatomic, strong) NSString *webImageURLString;
+@property (nonatomic, strong) UIImage *webImage;
+@property (nonatomic, strong) NSMutableData *mutdata;
 @end
 @implementation KTUserHeaderView
+@synthesize webImage          = _webImage;
 
 #pragma mark - public methods
-- (instancetype)initInSuperView:(UIView *)superView withImageUrl:(NSURL *)imageURL {
+- (instancetype)initInSuperView:(UIView *)superView withPlaceholderImg:(UIImage *)placeholder webImageUrlString:(NSString *)imgUrlString {
     self = [super initWithFrame:superView.frame];
     if (self) {
+        [self loadImageWithPlaceholderImg:placeholder webImageUrlSTring:imgUrlString];
         [self addGesture];
         [self setupLayerView];
         [superView addSubview:self];
         [self addConstraintInSuperView:superView];
-        
+        _mutdata = [[NSMutableData alloc] init];
     }
     return self;
+}
+
+- (void)loadImageWithPlaceholderImg:(UIImage *)placeholder webImageUrlSTring:(NSString *)imageUrlString {
+    [self setImage:placeholder];
+    [self setWebImageURLString:imageUrlString];
+    UIImage *image = self.webImage;
+    if (image) {
+        [self setImage:image];
+    } else {
+        [self requestImage:imageUrlString];
+    }
+    
 }
 
 //设置边框
@@ -82,6 +99,30 @@
     [self.window.rootViewController presentViewController:picker animated:YES completion:nil];
 }
 
+#pragma mark - web request
+- (void)requestImage:(NSString *)imageUrlString {
+    
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:imageUrlString]];
+    NSURLSession *urlSession = [NSURLSession sharedSession];
+    NSURLSessionDataTask *dataTask = [urlSession dataTaskWithRequest:request
+                                                   completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                                       if (!error) {
+                                                            UIImage *webImage = [UIImage imageWithData:data];
+                                                           dispatch_async(dispatch_get_main_queue(), ^{
+                                                                [self setImage:webImage];
+                                                           });
+                                                           [self setWebImage:webImage];
+                                                           [self.delegate KTUserHeaderImageDidChanged:webImage];
+                                                       } else {
+                                                           NSLog(@"download user header error : %@",error);
+                                                       }
+                                                   }];
+    [dataTask resume];
+
+}
+
+
+#pragma mark - event response
 - (void)userHeaderTappedAction {
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"修改头像" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
@@ -97,14 +138,6 @@
     [alertController addAction:choosePhoto];
     [self.window.rootViewController presentViewController:alertController animated:YES completion:nil];
 }
-
-//图像转base64
-- (NSString *)base64ImageStr:(UIImage *)image {
-    NSString *base64Str = [UIImageJPEGRepresentation(image,0.5)
-                           base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
-    return base64Str;
-}
-
 
 #pragma mark - UINavigationControllerDelegate
 - (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
@@ -122,4 +155,23 @@
     [self.delegate KTUserHeaderImageDidChanged:myimage];
 }
 
+#pragma mark - setter/getter
+
+- (void)setWebImageURLString:(NSString *)webImageURLString {
+    _webImageURLString = [NSString stringWithFormat:@"KTUserHeaderImageStorage-%@",webImageURLString];
+}
+
+- (UIImage *)webImage {
+    NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:self.webImageURLString];
+    if(!data) {
+        return nil;
+    }
+    UIImage *image = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    return image ? image : nil;
+}
+
+- (void)setWebImage:(UIImage *)webImage {
+     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:webImage];
+    [[NSUserDefaults standardUserDefaults] setObject:data forKey:self.webImageURLString];
+}
 @end
