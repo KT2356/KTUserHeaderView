@@ -9,12 +9,13 @@
 #import <UIKit/UIKit.h>
 @protocol KTUserHeaderViewDelegate <NSObject>
 @optional
-- (void)KTUserHeaderImageDidChanged:(NSURL *)newImageURL;
+- (void)KTUserHeaderImageDidChanged:(UIImage *)newImage;
 @end
 
-@interface KTUserHeaderView : UIView
+@interface KTUserHeaderView : UIImageView
 @property (nonatomic, weak) id <KTUserHeaderViewDelegate> delegate;
 
 - (instancetype)initInSuperView:(UIView *)superView withImageUrl:(NSURL *)imageURL;
 - (void)setUserImageBourderColor:(UIColor *)color Width:(float)width;
+- (NSString *)base64ImageStr:(UIImage *)image;
 @end

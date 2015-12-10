@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #import "KTUserHeaderView.h"
 
-@interface ViewController ()
+@interface ViewController ()<KTUserHeaderViewDelegate>
 @property (weak, nonatomic) IBOutlet UIView *superView;
 @property (nonatomic, strong) KTUserHeaderView *userIcon;
 @end
@@ -19,24 +19,17 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor darkGrayColor];
+    
+    //------
     _userIcon = [[KTUserHeaderView alloc] initInSuperView:self.superView withImageUrl:[NSURL URLWithString:@""]];
+    _userIcon.delegate = self;
     [_userIcon setUserImageBourderColor:[UIColor redColor] Width:1.5];
-    self.superView.backgroundColor = [UIColor greenColor];
-    [self addGesture];
-
+    //------
     
 }
-- (void)addGesture {
-    self.superView.userInteractionEnabled = YES;
-    UITapGestureRecognizer *tapped = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(userHeaderTappedAction)];
-    [self.superView addGestureRecognizer:tapped];
-}
 
-
-
-
-- (void)userHeaderTappedAction {
-    NSLog(@"2");
+- (void)KTUserHeaderImageDidChanged:(UIImage *)newImage {
+    NSLog(@"%@",newImage);
 }
 
 @end
