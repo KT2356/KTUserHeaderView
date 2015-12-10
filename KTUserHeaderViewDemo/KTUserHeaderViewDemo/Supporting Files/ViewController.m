@@ -22,7 +22,7 @@
     //------
     _userIcon = [[KTUserHeaderView alloc] initInSuperView:self.superView
                                        withPlaceholderImg:[UIImage imageNamed:@"placeholder"]
-                                              webImageUrlString:@"http://img0.imgtn.bdimg.com/it/u=1216347794,3395334200&fm=21&gp=0.jpg"];
+                                              webImageUrlString:@"http://pic2.nipic.com/20090506/1055421_080356081_2.jpg"];
     _userIcon.delegate = self;
     [_userIcon setUserImageBourderColor:[UIColor redColor] Width:1.5];
     //------

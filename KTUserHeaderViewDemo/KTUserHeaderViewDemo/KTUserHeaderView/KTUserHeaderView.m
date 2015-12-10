@@ -9,14 +9,17 @@
 #import "KTUserHeaderView.h"
 @interface KTUserHeaderView ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate>
 @property (nonatomic, strong) NSString *webImageURLString;
-@property (nonatomic, strong) UIImage *webImage;
-@property (nonatomic, strong) NSMutableData *mutdata;
+@property (nonatomic, strong) UIImage *webImage;//网络获取image
 @end
+
 @implementation KTUserHeaderView
-@synthesize webImage          = _webImage;
+@synthesize webImage = _webImage;
 
 #pragma mark - public methods
-- (instancetype)initInSuperView:(UIView *)superView withPlaceholderImg:(UIImage *)placeholder webImageUrlString:(NSString *)imgUrlString {
+- (instancetype)initInSuperView:(UIView *)superView
+             withPlaceholderImg:(UIImage *)placeholder
+              webImageUrlString:(NSString *)imgUrlString
+{
     self = [super initWithFrame:superView.frame];
     if (self) {
         [self loadImageWithPlaceholderImg:placeholder webImageUrlSTring:imgUrlString];
@@ -24,7 +27,6 @@
         [self setupLayerView];
         [superView addSubview:self];
         [self addConstraintInSuperView:superView];
-        _mutdata = [[NSMutableData alloc] init];
     }
     return self;
 }
@@ -32,6 +34,7 @@
 - (void)loadImageWithPlaceholderImg:(UIImage *)placeholder webImageUrlSTring:(NSString *)imageUrlString {
     [self setImage:placeholder];
     [self setWebImageURLString:imageUrlString];
+    //判断图像是否存于本地
     UIImage *image = self.webImage;
     if (image) {
         [self setImage:image];
@@ -50,13 +53,13 @@
 #pragma mark - private methods
 //设置layer
 - (void)setupLayerView {
-    self.contentMode = UIViewContentModeScaleAspectFill;
-    self.clipsToBounds = YES;
-    self.layer.cornerRadius = self.frame.size.width/2;
+    self.contentMode           = UIViewContentModeScaleAspectFill;
+    self.clipsToBounds         = YES;
+    self.layer.cornerRadius    = self.frame.size.width/2;
     self.layer.backgroundColor = [[UIColor grayColor] CGColor];
-    self.layer.borderColor = [[UIColor whiteColor] CGColor];
-    self.layer.masksToBounds = YES;
-    self.layer.borderWidth = 1.5f;
+    self.layer.borderColor     = [[UIColor whiteColor] CGColor];
+    self.layer.masksToBounds   = YES;
+    self.layer.borderWidth     = 1.5f;
 }
 
 - (void)addConstraintInSuperView:(UIView *)superView {
@@ -71,7 +74,8 @@
 //点击手势
 - (void)addGesture {
     self.userInteractionEnabled = YES;
-    UITapGestureRecognizer *tapped = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(userHeaderTappedAction)];
+    UITapGestureRecognizer *tapped = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                             action:@selector(userHeaderTappedAction)];
     [self addGestureRecognizer:tapped];
 }
 
@@ -101,26 +105,25 @@
 
 #pragma mark - web request
 - (void)requestImage:(NSString *)imageUrlString {
-    
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:imageUrlString]];
     NSURLSession *urlSession = [NSURLSession sharedSession];
     NSURLSessionDataTask *dataTask = [urlSession dataTaskWithRequest:request
                                                    completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                                                        if (!error) {
                                                             UIImage *webImage = [UIImage imageWithData:data];
-                                                           dispatch_async(dispatch_get_main_queue(), ^{
-                                                                [self setImage:webImage];
-                                                           });
-                                                           [self setWebImage:webImage];
-                                                           [self.delegate KTUserHeaderImageDidChanged:webImage];
-                                                       } else {
+                                                           if (webImage) {
+                                                               dispatch_async(dispatch_get_main_queue(), ^{
+                                                                   [self setImage:webImage];
+                                                               });
+                                                               [self setWebImage:webImage];
+                                                               [self.delegate KTUserHeaderImageDidChanged:webImage];
+                                                           }
+                                                        } else {
                                                            NSLog(@"download user header error : %@",error);
                                                        }
                                                    }];
     [dataTask resume];
-
 }
-
 
 #pragma mark - event response
 - (void)userHeaderTappedAction {
@@ -152,11 +155,12 @@
     [picker dismissViewControllerAnimated:YES completion:nil];
     UIImage *myimage =  [info objectForKey:UIImagePickerControllerOriginalImage];
     [self setImage:myimage];
+    //替换愿图像，防止网络问题引起图像没保存
+    [self setWebImage:myimage];
     [self.delegate KTUserHeaderImageDidChanged:myimage];
 }
 
 #pragma mark - setter/getter
-
 - (void)setWebImageURLString:(NSString *)webImageURLString {
     _webImageURLString = [NSString stringWithFormat:@"KTUserHeaderImageStorage-%@",webImageURLString];
 }
