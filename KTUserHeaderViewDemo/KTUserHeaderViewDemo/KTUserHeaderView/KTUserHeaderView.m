@@ -71,6 +71,11 @@
     [superView addConstraints:constraints2];
 }
 
+//当前viewcontroller
+- (UIViewController *)currentViewController {
+    return self.window.rootViewController;
+}
+
 //点击手势
 - (void)addGesture {
     self.userInteractionEnabled = YES;
@@ -86,13 +91,13 @@
         picker.allowsEditing = YES;
         //摄像头
         picker.sourceType = UIImagePickerControllerSourceTypeCamera;
-        [self.window.rootViewController presentViewController: picker animated:YES completion:nil];
+        [[self currentViewController] presentViewController: picker animated:YES completion:nil];
         
     } else {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"系统提示" message:@"摄像头打开失败！" preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:nil];
         [alert addAction:cancelAction];
-        [self.window.rootViewController presentViewController:alert animated:YES completion:nil];
+        [[self currentViewController] presentViewController:alert animated:YES completion:nil];
     }
 }
 
@@ -100,7 +105,7 @@
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     picker.delegate = self;
-    [self.window.rootViewController presentViewController:picker animated:YES completion:nil];
+    [[self currentViewController] presentViewController:picker animated:YES completion:nil];
 }
 
 #pragma mark - web request
@@ -139,8 +144,9 @@
     [alertController addAction:cancelAction];
     [alertController addAction:archiveAction];
     [alertController addAction:choosePhoto];
-    [self.window.rootViewController presentViewController:alertController animated:YES completion:nil];
+    [[self currentViewController] presentViewController:alertController animated:YES completion:nil];
 }
+
 
 #pragma mark - UINavigationControllerDelegate
 - (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
@@ -153,7 +159,7 @@
 # pragma mark - UIImagePickerControllerDelegate
 - (void)imagePickerController:(UIImagePickerController  *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
     [picker dismissViewControllerAnimated:YES completion:nil];
-    UIImage *myimage =  [info objectForKey:UIImagePickerControllerOriginalImage];
+    UIImage *myimage = [info objectForKey:UIImagePickerControllerOriginalImage];
     [self setImage:myimage];
     //替换愿图像，防止网络问题引起图像没保存
     [self setWebImage:myimage];
